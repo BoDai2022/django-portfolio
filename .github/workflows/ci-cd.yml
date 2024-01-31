@@ -1,0 +1,59 @@
+name: Django CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Step 1: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'  # Adjust this to your specific Python version
+
+    # Step 2: Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 3: Run tests
+    - name: Run tests
+      run: |
+        python backend/bosite/manage.py test
+
+    # Step 4: Deploy to EC2 if tests pass
+    - name: Deploy to EC2
+      if: success()  # This ensures deployment happens only if tests pass
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "."
+        target: "/path/to/your/app"
+
+    # Step 5: Execute remote SSH commands
+    - name: Execute SSH commands
+      if: success()
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          cd /path/to/your/app
+          source venv/bin/activate
+          pip install -r requirements.txt
+          python manage.py migrate
+          python manage.py collectstatic --noinput
+          sudo systemctl restart your_app_service
