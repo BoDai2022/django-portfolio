@@ -1,0 +1,1 @@
+default_app_config = "job_application.apps.JobApplicationConfig"
