@@ -27,7 +27,7 @@ jobs:
     # Step 3: Run tests
     - name: Run tests
       run: |
-        python backend/bosite/manage.py test
+        python manage.py test
 
     # Step 4: Deploy to EC2 if tests pass
     - name: Deploy to EC2
@@ -39,7 +39,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         source: "."
-        target: "/path/to/your/app"
+        target: "/home/ec2-user/django/django-portfolio"
 
     # Step 5: Execute remote SSH commands
     - name: Execute SSH commands
@@ -51,9 +51,9 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          cd /path/to/your/app
+          cd /home/ec2-user/django/django-portfolio
           source venv/bin/activate
           pip install -r requirements.txt
           python manage.py migrate
           python manage.py collectstatic --noinput
-          sudo systemctl restart your_app_service
+          sudo systemctl restart bosite
