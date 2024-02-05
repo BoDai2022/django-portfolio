@@ -157,7 +157,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / '../logs' / 'django_errors.log',
+            'filename': BASE_DIR / '../../logs' / 'django_errors.log',
         },
     },
     'loggers': {

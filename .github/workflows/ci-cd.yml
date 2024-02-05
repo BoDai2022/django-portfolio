@@ -26,7 +26,7 @@ jobs:
     # Create logs directory
     - name: Create logs directory
       run: |
-        mkdir -p ${{ github.workspace }}/logs
+        mkdir -p ${{ github.workspace }}/../../logs
     # Step 3: Run tests
     - name: Run tests
       run: |
