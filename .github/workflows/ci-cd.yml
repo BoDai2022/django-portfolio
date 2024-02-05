@@ -29,7 +29,7 @@ jobs:
       run: |
         python manage.py test
 
-    # Step 4: Deploy to EC2 if tests pass  
+    # Step 4: Deploy to EC2 if tests pass
     - name: Deploy to EC2
       if: success()  # This ensures deployment happens only if tests pass
       uses: appleboy/scp-action@master
