@@ -6,4 +6,4 @@ This django backend provides 3 services running on AWS EC2:
 - serves as an api to get soccer players' infomation from kaggle dataset (https://www.kaggle.com/datasets/aishwarya1992/fifa-19-player-database).
   http://3.106.250.180/api/players/7/
 
-![players](/players/players.png)
+![players](/players/players.gif)
