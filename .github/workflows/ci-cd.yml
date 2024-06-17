@@ -74,8 +74,8 @@ jobs:
         port: 22
         script: |
           set -e
-          cp ../db.sqlite3 .
           cd /home/ec2-user/django/django-portfolio
+          cp ../db.sqlite3 .
           source venv/bin/activate
           pip install -r requirements.txt
           python3 manage.py migrate
