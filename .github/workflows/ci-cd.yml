@@ -48,9 +48,12 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-        source: "."
-        target: "/home/ec2-user/django/django-portfolio"
-        scp-extra-args: "--exclude db.sqlite3"
+        # source: "."
+        # target: "/home/ec2-user/django/django-portfolio"
+        script: |
+          sudo apt-get update
+          sudo apt-get install -y rsync
+          rsync -avz --exclude='db.sqlite3' -e "ssh -i ${{ secrets.SSH_PRIVATE_KEY }}" . ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/django/django-portfolio
     # Step 5: Execute remote SSH commands
     - name: Execute SSH commands
       if: success()
