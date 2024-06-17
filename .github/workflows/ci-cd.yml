@@ -51,6 +51,18 @@ jobs:
         source: "."
         target: "/home/ec2-user/django/django-portfolio"
         rsync-options: '--exclude=db.sqlite3'
+    # Debug Step: Verify files on EC2 after deployment
+    - name: Verify files on EC2 after deployment
+      if: success()
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          echo "Files on EC2 after deployment:"
+          find /home/ec2-user/django/django-portfolio -type f    
     # Step 5: Execute remote SSH commands
     - name: Execute SSH commands
       if: success()
