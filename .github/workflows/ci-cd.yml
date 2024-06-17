@@ -48,8 +48,9 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-        source: "!db.sqlite3"
+        source: "."
         target: "/home/ec2-user/django/django-portfolio"
+        scp-extra-args: "--exclude db.sqlite3"
     # Step 5: Execute remote SSH commands
     - name: Execute SSH commands
       if: success()
