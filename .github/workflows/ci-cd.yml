@@ -39,21 +39,30 @@ jobs:
       run: |
         python manage.py test
 
-    # Step 4: Deploy to EC2 if tests pass
-    - name: Deploy to EC2
-      if: success()  # This ensures deployment happens only if tests pass
+  # Step 3.5 back up db.sqlite3
+    - name: back up db.sqlite3
+      if: success()
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-        # source: "."
-        # target: "/home/ec2-user/django/django-portfolio"
         script: |
-          sudo yum update -y
-          sudo yum install -y rsync
-          rsync -avz --exclude='db.sqlite3' -e "ssh -i ${{ secrets.SSH_PRIVATE_KEY }}" . ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/django/django-portfolio
+          set -e
+          cd /home/ec2-user/django/django-portfolio
+          cp db.sqlite3 ../
+    # Step 4: Deploy to EC2 if tests pass
+    - name: Deploy to EC2
+      if: success()  # This ensures deployment happens only if tests pass
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "."
+        target: "/home/ec2-user/django/django-portfolio"
     # Step 5: Execute remote SSH commands
     - name: Execute SSH commands
       if: success()
@@ -65,6 +74,7 @@ jobs:
         port: 22
         script: |
           set -e
+          cp ../db.sqlite3 .
           cd /home/ec2-user/django/django-portfolio
           source venv/bin/activate
           pip install -r requirements.txt
